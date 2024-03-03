@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% block title %}Login - BUAIC{% endblock %} {% block
+content %}
+<div class="container mx-auto mt-8 flex justify-center items-center">
+  <div class="bg-white p-8 shadow-md rounded-md w-96">
+    <h1 class="text-3xl font-bold mb-6">Login</h1>
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <div class="mb-4">
+      <ul class="list-disc pl-4">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %} {% endwith %}
+
+    <form method="post" action="{{ url_for('user.login') }}" class="space-y-4">
+      <div>
+        <label for="email" class="text-sm">Email:</label>
+        <input
+          type="email"
+          name="email"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="text-sm">Password:</label>
+        <input
+          type="password"
+          name="password"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 w-full"
+      >
+        Login
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
