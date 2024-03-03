@@ -1,0 +1,159 @@
+{% extends 'base.html' %} {% block title %}Registration - BUAIC{% endblock %} {%
+block content %}
+<div class="container mx-auto mt-8 flex justify-center items-center">
+  <div class="bg-white p-8 shadow-md rounded-md w-96">
+    <h1 class="text-3xl font-bold mb-6">Registration Form</h1>
+
+    <form
+      method="POST"
+      action="{{ url_for('user.register') }}"
+      class="space-y-4"
+    >
+      <div>
+        <label for="name" class="text-sm">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Your Full Name"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="student_id" class="text-sm">Student ID:</label>
+        <input
+          type="text"
+          id="student_id"
+          name="student_id"
+          placeholder="Your Student ID"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="email" class="text-sm">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Your Email"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="phone" class="text-sm">Phone Number:</label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="Your Phone Number"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="semester" class="text-sm">Semester:</label>
+        <input
+          type="text"
+          id="semester"
+          name="semester"
+          placeholder="1st, 2nd etc."
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="dob" class="text-sm">Date of Birth:</label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="blood_group" class="text-sm">Blood Group:</label>
+        <select
+          id="blood_group"
+          name="blood_group"
+          required
+          class="border w-full p-2 rounded-md"
+        >
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="preferred_department" class="text-sm"
+          >Preferred Department:</label
+        >
+        <select
+          id="preferred_department"
+          name="preferred_department"
+          required
+          class="border w-full p-2 rounded-md"
+        >
+          <option value="Communication and Marketing">
+            Communication and Marketing
+          </option>
+          <option value="Creative">Creative</option>
+          <option value="Event Management">Event Management</option>
+          <option value="Finance">Finance</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Press Release and Publications">
+            Press Release and Publications
+          </option>
+          <option value="Research and Development">
+            Research and Development
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label for="password" class="text-sm">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="confirm_password" class="text-sm">Confirm Password:</label>
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          required
+          class="border w-full p-2 rounded-md"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 w-full"
+      >
+        Register
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

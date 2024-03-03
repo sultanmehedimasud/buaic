@@ -1,0 +1,12 @@
+{
+  "name": "buaic",
+  "version": "1.0.0",
+  "description": "A club management website",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tailwindcss build -o ./static/css/tailwind.css"
+  },
+  "author": "",
+  "license": "ISC"
+}
