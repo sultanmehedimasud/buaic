@@ -15,16 +15,16 @@ class User(db.Model, UserMixin):
     dob = db.Column(db.Date, nullable=False)
     blood_group = db.Column(db.String(3), nullable=False)
     department = db.Column(db.String(35), nullable=False)
-    _password = db.Column('password', db.String(100), nullable=False)
+    password = db.Column('password', db.String(100), nullable=False)
     approved = db.Column(db.Boolean, default=False)
     designation = db.Column(db.String(20), default='General Member')
     joined_semester = db.Column(db.String(10), nullable=False)
     
     def set_password(self, password):
-        self._password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
-        return bcrypt.check_password_hash(self._password, password)
+        return bcrypt.check_password_hash(self.password, password)
     
     def get_id(self):
         return str(self.id)
