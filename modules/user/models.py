@@ -1,4 +1,4 @@
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt, generate_password_hash
 from flask_login import UserMixin
 
 from app import db
@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     approved = db.Column(db.Boolean, default=False)
     designation = db.Column(db.String(20), default='General Member')
     joined_semester = db.Column(db.String(10), nullable=False)
+    reset_token = db.Column(db.String(100), unique=True)
     
     def set_password(self, password):
         self._password = bcrypt.generate_password_hash(password).decode('utf-8')

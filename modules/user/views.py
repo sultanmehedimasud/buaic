@@ -1,3 +1,5 @@
+import secrets
+import string
 from datetime import datetime
 
 from flask import (Blueprint, flash, redirect, render_template, request,
@@ -5,8 +7,9 @@ from flask import (Blueprint, flash, redirect, render_template, request,
 from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_manager,
                          login_required, login_user, logout_user)
+from flask_mail import Mail, Message
 
-from app import db, login_manager
+from app import db, login_manager, mail
 from modules.intake.models import Semester
 
 from .models import User
@@ -18,6 +21,30 @@ bcrypt = Bcrypt()
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+def generate_reset_token(length=32):
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+def send_reset_email(user, token, mail):
+    user.reset_token = token
+    db.session.commit()
+    
+    print(user.email)
+    
+    print(token)
+
+    reset_link = url_for('user.reset_password', token=token, _external=True)
+    msg = Message(subject='Password Reset Request', sender='sabbirwasif27@gmail.com', recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+    
+                {reset_link}
+
+                If you did not make this request then simply ignore this email and no changes will be made.
+                '''
+    
+    mail.send(msg)
+
 
 def get_last_semester():
     last_semester = Semester.query.order_by(Semester.semester_name.desc()).first()
@@ -59,7 +86,7 @@ def register():
             blood_group=blood_group,
             department=preferred_department,
             joined_semester=last_semester,
-            password=hashed_password,
+            _password=hashed_password,
         )
         
         db.session.add(user)
@@ -94,3 +121,64 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
+
+@user_bp.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = generate_reset_token()
+            send_reset_email(user, token, mail)
+            flash('Password reset link sent to your email.', 'success')
+            return redirect(url_for('user.login'))
+        else:
+            flash('Email address not found.', 'danger')
+    return render_template('auth/forgot_password.html')
+
+
+@user_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    print("Reset password function called")
+    user = User.query.filter_by(reset_token=token).first()
+    if not user:
+        flash('Invalid or expired reset token.', 'danger')
+        return redirect(url_for('user.forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('user.reset_password', token=token))
+       
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        print(hashed_password)
+        user._password = hashed_password
+        user.reset_token = None
+        db.session.commit()
+
+        flash('Your password has been reset successfully.', 'success')
+        return redirect(url_for('user.login'))
+
+    return render_template('auth/reset_password.html', token=token)
+
+
+@user_bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        if current_user.check_password(current_password) and new_password == confirm_password:
+            current_user.set_password(new_password)
+            db.session.commit()
+            flash('Password changed successfully.', 'success')
+            return redirect(url_for('user.login'))
+        else:
+            flash('Failed to change password. Please check your input.', 'error')
+            return redirect(url_for('user.change_password'))
+    
+    return render_template('auth/change_password.html')
