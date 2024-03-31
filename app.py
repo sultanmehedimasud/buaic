@@ -44,6 +44,9 @@ from modules.intake.views import intake_bp
 
 app.register_blueprint(intake_bp)
 
+from modules.members.views import members_bp
+
+app.register_blueprint(members_bp)
 
 @app.route('/home')
 def home():

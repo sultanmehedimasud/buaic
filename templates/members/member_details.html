@@ -11,14 +11,27 @@ endblock %} {% block content %}
           <strong>Student ID:</strong> {{ user.student_id }}
         </p>
         <p class="text-gray-600"><strong>Email:</strong> {{ user.email }}</p>
+        <p class="text-gray-600">
+          <strong>Department:</strong> {{ user.department }}
+        </p>
+        <p class="text-gray-600">
+          <strong>Designation:</strong> {{ user.designation }}
+        </p>
         <p class="text-gray-600"><strong>Phone:</strong> {{ user.phone }}</p>
         <p class="text-gray-600">
           <strong>Semester:</strong> {{ user.semester }}
         </p>
+        <p class="text-gray-600">
+          <strong>Date of Birth:</strong> {{ user.dob }}
+        </p>
+        <p class="text-gray-600">
+          <strong>Blood Group:</strong> {{ user.blood_group }}
+        </p>
+        <p class="text-gray-600">
+          <strong>Joined Semester:</strong> {{ user.joined_semester }}
+        </p>
       </div>
-      <div>
-        <!-- You can add more user details here -->
-      </div>
+      <div></div>
     </div>
   </div>
 </div>
