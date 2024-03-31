@@ -182,3 +182,37 @@ def change_password():
             return redirect(url_for('user.change_password'))
     
     return render_template('auth/change_password.html')
+
+@user_bp.route('/all-members')
+def all_members():
+    members = User.query.all()
+    
+    department_order = [
+        'X',
+        'Communication and Marketing',
+        'Creative',
+        'Event Management',
+        'Finance',
+        'Human Resources',
+        'Press Release and Publications',
+        'Research and Development'
+    ]
+    
+    position_order = [
+        'Governing Body Members',
+        'Director',
+        'Assistant Director',
+        'Senior Executive',
+        'Executive',
+        'General Member'
+    ]
+    
+    members_sorted = sorted(members, key=lambda x: (department_order.index(x.department if x.department != 'Governing Body Members' else ''), position_order.index(x.designation)))
+    
+    return render_template('all_members.html', members=members_sorted)
+
+
+@user_bp.route('/user-profile/<int:user_id>')
+def user_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('user_profile.html', user=user)
