@@ -52,7 +52,12 @@ def register():
         if not is_strong_password(password):
             flash('Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.', 'danger')
             return redirect(url_for('user.register'))
-        
+       
+        #phone number validation
+        if not is_valid_phone(phone):
+            flash('Invalid phone number.')
+            return redirect(url_for('user.register'))
+          
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         last_semester = get_last_semester()
@@ -78,7 +83,11 @@ def register():
 
     return render_template('auth/registration.html')
 
-
+#function to check if phone number is valid
+def is_valid_phone(phone):
+    if len(phone) != 11:
+        return False
+    return True
 
 @user_bp.route('/login', methods=['GET', 'POST'])
 def login():
