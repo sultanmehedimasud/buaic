@@ -218,3 +218,76 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
+
+#edit profile
+@user_bp.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    user = User.query.get(current_user.id)
+    if not user:
+        flash('User not found.', 'danger')
+        return redirect(url_for('home'))
+      
+
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        student_id = request.form.get('student_id')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        semester = request.form.get('semester')
+        blood_group = request.form.get('blood_group')
+        preferred_department = request.form.get('preferred_department')
+
+
+        existing_user = User.query.filter_by(phone=phone).first()
+        if existing_user and existing_user.id != user.id:
+            flash('This phone number is already in use.', 'danger')
+            return redirect(url_for('user.edit_profile'))
+        
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user and existing_user.id != user.id:
+            flash('This email is already in use.', 'danger')
+            return redirect(url_for('user.edit_profile'))
+        
+        #id check
+        existing_user = User.query.filter_by(student_id=student_id).first()
+        if existing_user and existing_user.id != user.id:
+            flash('This student ID is already in use.', 'danger')
+            return redirect(url_for('user.edit_profile'))
+        
+        
+        print(f"Phone number before saving: {phone}")
+
+        
+        user.name = name
+        
+        user.student_id = student_id
+        user.email = email
+        user.phone = phone
+        user.semester = semester
+        user.blood_group = blood_group
+        user.department = preferred_department
+
+    
+        db.session.commit()
+        
+        print(f"Phone number after saving: {user.phone}")
+        flash('Profile updated successfully.', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('auth/edit_profile.html', user=user)
+
+
+#view profile
+@user_bp.route('/profile')
+@login_required
+def profile():
+    user = User.query.get(current_user.id)
+    first_name = user.name.split()[0]
+    if not user:
+        flash('User not found.', 'danger')
+        return redirect(url_for('home'))
+
+    return render_template('auth/profile.html', user=user, first_name=first_name)
+
