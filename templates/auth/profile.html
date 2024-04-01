@@ -1,0 +1,33 @@
+{% extends 'base.html' %} 
+{% block title %}{{ user.name }}'s Profile{% endblock %} 
+{% block content %}
+<div class="container mx-auto mt-8 flex justify-center items-center">
+  <div class="bg-white p-8 shadow-md rounded-md w-96">
+    <h2 class="text-3xl font-bold mb-6">{{ first_name }}'s Profile</h2>
+    <div class="row">
+      <div class="col-md-16">
+        <div class="card">
+          <div class="card-body">
+
+            <h4 class="card-title"><strong>{{ user.name }}</strong></h4>
+            <p class="card-text"><strong>Student ID:</strong> {{ user.student_id }}</p>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>Phone:</strong> {{ user.phone }}</p>
+            <p class="card-text"><strong>Semester:</strong> {{ user.semester }}</p>
+            <p class="card-text"><strong>Date of Birth:</strong> {{ user.dob }}</p>
+            <p class="card-text"><strong>Blood Group:</strong> {{ user.blood_group }}</p>
+            <p class="card-text"><strong>Preferred Department:</strong> {{ user.department }}</p>
+          
+            <div class="flex justify-start mt-2">
+              <form action="{{ url_for('user.edit_profile') }}" method="get">
+                <button type="submit" class="bg-blue-500  text-white font-bold py-2 px-4 rounded">Edit Profile</button>
+            </form>
+            </div>
+          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
