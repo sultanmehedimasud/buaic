@@ -1,0 +1,21 @@
+{% extends 'base.html' %} 
+{% block title %}Results of polls{% endblock %} 
+{% block content %}
+<div class="container mx-auto mt-8 flex justify-center items-center">
+  <div class="bg-white p-8 shadow-md rounded-md w-96">
+    <h1 class="text-3xl font-bold mb-6">Poll result</h1>
+    
+
+    <div class="space-y-4">
+      <p>{{ poll.question }}</p>
+      <ul>
+        {% for option in options %}
+        <li>{{ option }}: {{ votes[option] }}</li>
+        {% endfor %}
+      </ul>
+      Majority: {{ majority }}
+    </div>
+  </div>
+</div>
+    
+    {% endblock %}

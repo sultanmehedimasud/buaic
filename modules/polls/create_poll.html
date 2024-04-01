@@ -1,0 +1,39 @@
+{% extends 'base.html' %} 
+{% block title %}Create Poll{% endblock %} 
+{% block content %}
+<div class="container mx-auto mt-8 flex justify-center items-center">
+    <div class="bg-white p-8 shadow-md rounded-md w-96">
+      <h1 class="text-3xl font-bold mb-6">Create new Poll</h1>
+    
+    <form method="POST" action="{{ url_for('polls.create_poll')}}">
+        
+        <div class="form-group">
+            <label for="question">Question:</label>
+            <input type="text" class="form-control" id="question" name="question">
+        </div>
+        <div class="form-group">
+            <label for="option1">Option 1:</label>
+            <input type="text" class="form-control" id="option1" name="option1">
+        </div>
+        <div class="form-group">
+            <label for="option2">Option 2:</label>
+            <input type="text" class="form-control" id="option2" name="option2">
+        </div>
+        <div class="form-group">
+            <label for="option3">Option 3:</label>
+            <input type="text" class="form-control" id="option3" name="option3">
+        </div>
+        <div class="form-group">
+            <label for="option4">Option 4:</label>
+            <input type="text" class="form-control" id="option4" name="option4">
+        </div>
+        <button
+    type="submit"
+    class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 w-full">
+    submit
+    </button>
+    </form> 
+</div>
+</div>
+        
+{% endblock %}
