@@ -49,6 +49,14 @@ from modules.members.views import members_bp
 
 app.register_blueprint(members_bp)
 
+from modules.polls.views import polls_bp
+
+app.register_blueprint(polls_bp)
+
+from modules.event.views import event_bp
+
+app.register_blueprint(event_bp)
+
 @app.route('/home')
 def home():
     return render_template('landing/index.html')
