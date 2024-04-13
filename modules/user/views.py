@@ -5,8 +5,8 @@ from datetime import datetime
 from flask import (Blueprint, flash, redirect, render_template, request,
                    session, url_for)
 from flask_bcrypt import Bcrypt
-from flask_login import (LoginManager, current_user, login_manager,
-                         login_required, login_user, logout_user)
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
 from flask_mail import Mail, Message
 
 from app import db, login_manager, mail
@@ -29,10 +29,6 @@ def generate_reset_token(length=32):
 def send_reset_email(user, token, mail):
     user.reset_token = token
     db.session.commit()
-    
-    print(user.email)
-    
-    print(token)
 
     reset_link = url_for('user.reset_password', token=token, _external=True)
     msg = Message(subject='Password Reset Request', sender='sabbirwasif27@gmail.com', recipients=[user.email])
