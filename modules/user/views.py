@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+import re
 import secrets
 import string
 from datetime import datetime
@@ -6,8 +6,8 @@ from datetime import datetime
 from flask import (Blueprint, flash, redirect, render_template, request,
                    session, url_for)
 from flask_bcrypt import Bcrypt
-from flask_login import (LoginManager, current_user, login_required,
-                         login_user, logout_user)
+from flask_login import (LoginManager, current_user, login_manager,
+                         login_required, login_user, logout_user)
 from flask_mail import Mail, Message
 
 from app import db, login_manager, mail
@@ -119,82 +119,13 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
 
-@user_bp.route('/forgot-password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        user = User.query.filter_by(email=email).first()
-        if user:
-            token = generate_reset_token()
-            send_reset_email(user, token, mail)
-            flash('Password reset link sent to your email.', 'success')
-            return redirect(url_for('user.login'))
-        else:
-            flash('Email address not found.', 'danger')
-    return render_template('auth/forgot_password.html')
 
 
-@user_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    print("Reset password function called")
-    user = User.query.filter_by(reset_token=token).first()
-    if not user:
-        flash('Invalid or expired reset token.', 'danger')
-        return redirect(url_for('user.forgot_password'))
-
-    if request.method == 'POST':
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-
-        if password != confirm_password:
-            flash('Passwords do not match.', 'danger')
-            return redirect(url_for('user.reset_password', token=token))
-       
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        print(hashed_password)
-        user._password = hashed_password
-        user.reset_token = None
-        db.session.commit()
-
-        flash('Your password has been reset successfully.', 'success')
-        return redirect(url_for('user.login'))
-
-    return render_template('auth/reset_password.html', token=token)
 
 
-@user_bp.route('/change-password', methods=['GET', 'POST'])
-@login_required
-def change_password():
-    if request.method == 'POST':
-        current_password = request.form.get('current_password')
-        new_password = request.form.get('new_password')
-        confirm_password = request.form.get('confirm_password')
-        if current_user.check_password(current_password) and new_password == confirm_password:
-            current_user.set_password(new_password)
-            db.session.commit()
-            flash('Password changed successfully.', 'success')
-            return redirect(url_for('user.login'))
-        else:
-            flash('Failed to change password. Please check your input.', 'error')
-            return redirect(url_for('user.change_password'))
-    
-    return render_template('auth/change_password.html')
-=======
-from datetime import datetime
 
-from flask import (Blueprint, flash, redirect, render_template, request,
-                   session, url_for)
-from flask_bcrypt import Bcrypt
-from flask_login import (LoginManager, current_user, login_manager,
-                         login_required, login_user, logout_user)
 
-# from app import db, login_manager
-from extensions import db, login_manager
-from modules.intake.models import Semester
 
-from .models import User
-
-import re
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -288,67 +219,6 @@ def login():
 
     return render_template('auth/login.html')
 
-@user_bp.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        student_id = request.form.get('student_id')  
-
-        #if all fields are empty
-        if not email or not student_id:
-            flash('All fields are required.')
-            return redirect(url_for('user.forgot_password'))
-        user = User.query.filter_by(email=email, student_id=student_id).first()  # Check both email and id
-        
-
-
-        if user:
-            session['reset_password_email'] = email
-            return redirect(url_for('user.reset_password', email=email))
-        else:
-            flash('User not found.')
-
-
-    return render_template('auth/forgot_password.html')
-
-@user_bp.route('/reset_password', methods=['GET', 'POST'])
-def reset_password():
-    if request.method == 'POST':
-        # email = request.form.get('email')
-        email = session.get('reset_password_email')
-        new_password = request.form.get('new_password')
-        confirm_password = request.form.get('confirm_password')
-        
-        #if all fields are empty
-        if not email or not new_password or not confirm_password:
-            flash('All fields are required.')
-            return redirect(url_for('user.reset_password', email=email))
-        
-
-        # print(email, new_password, confirm_password)
-
-        if new_password != confirm_password:
-            flash('Passwords do not match.')
-            return redirect(url_for('user.reset_password', email=email))
-        
-        #strong password check
-        if not is_strong_password(new_password):
-            flash('Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.', 'danger')
-            return redirect(url_for('user.reset_password', email=email))
-
-        user = User.query.filter_by(email=email).first()
-
-        if user:
-            hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-            user.password = hashed_password
-            db.session.commit()
-            flash('Your password has been updated!')
-            return redirect(url_for('user.login'))
-        else:
-            flash('Invalid email', 'danger')
-
-    return render_template('auth/reset_password.html')
-
 def is_strong_password(password):
     if (len(password) < 8 or
         not re.search("[a-z]", password) or
@@ -358,15 +228,11 @@ def is_strong_password(password):
         return False
     return True
 
-#change password
-@user_bp.route('/change_password', methods=['GET', 'POST'])
-@login_required
-def change_password():
     if request.method == 'POST':
         current_password = request.form.get('current_password')
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_password')
-        #if fields are empty
+
         if not current_password or not new_password or not confirm_password:
             flash('All fields are required.')
             return redirect(url_for('user.change_password'))
@@ -533,4 +399,3 @@ def change_password():
             return redirect(url_for('user.change_password'))
     
     return render_template('auth/change_password.html')
->>>>>>> cabf5b5b97a2e82ff01e5d1c4308a631f5d67453

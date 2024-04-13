@@ -4,11 +4,7 @@
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<<<<<<< HEAD
       <title>{% block title %}BUAIC{% endblock %}</title>
-=======
-      <title>{% block title %}Your Website Title{% endblock %}</title>
->>>>>>> cabf5b5b97a2e82ff01e5d1c4308a631f5d67453
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -54,46 +50,36 @@
             <li><a href="/reports">Reports</a></li>
             {% elif current_user.designation in ['Director', 'Assistant
             Director'] %}
-<<<<<<< HEAD
             <li><a href="/members/all-members">Members</a></li>
-=======
-            <li><a href="/members">Members</a></li>
->>>>>>> cabf5b5b97a2e82ff01e5d1c4308a631f5d67453
             <li><a href="/feedbacks">Feedbacks</a></li>
             {% endif %}
 
             <li><a href="/report_user">Report User</a></li>
             <li><a href="/give_feedback">Give Feedback</a></li>
-<<<<<<< HEAD
-=======
 
-            <li> <a href="/event/list">Events</a></li>
-              
+            <li><a href="/event/list">Events</a></li>
+
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown"
                 >Polls <b class="caret"></b>
-                </a>
+              </a>
               <ul class="dropdown-menu">
                 <li><a href="/polls/create_poll">Create Poll</a></li>
                 <li><a href="/polls/view_polls">View Polls</a></li>
               </ul>
             </li>
-            
->>>>>>> cabf5b5b97a2e82ff01e5d1c4308a631f5d67453
+
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown"
                 >{{ current_user.name }} <b class="caret"></b
               ></a>
               <ul class="dropdown-menu">
-<<<<<<< HEAD
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="/edit_profile">Edit Profile</a></li>
                 <li><a href="/user/change-password">Change Password</a></li>
-=======
                 <li><a href="/user/profile">Profile</a></li>
                 <li><a href="/user/edit_profile">Edit Profile</a></li>
                 <li><a href="/user/change_password">Change Password</a></li>
->>>>>>> cabf5b5b97a2e82ff01e5d1c4308a631f5d67453
                 <li><a href="/user/logout">Logout</a></li>
               </ul>
             </li>
