@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block title %}Event details{% endblock %} {% block
+content %}
+<div class="container mx-auto mt-8 flex justify-center items-center">
+  <div class="bg-white p-8 shadow-md rounded-md w-96">
+    <h1 class="text-3xl font-bold mb-6">Event Details</h1>
+    <div class="container">
+      <strong><h1>{{event.title}}</h1></strong>
+      <p>{{event.description}}</p>
+      <p><b>Start Date:</b> {{event.start_date}}</p>
+        <p><b>End Date:</b> {{event.end_date}}</p>
+        <p><b>Venue:</b> {{event.venue}}</p>
+      <br />
+      <div>
+        <a
+          href="{{url_for('event.delete', event_id=event.id)}}"
+          class="bg-blue-500 text-white font-bold py-1 px-4 rounded"
+          >Delete</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
