@@ -1,7 +1,9 @@
-from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_login import LoginManager
+# from flask_migrate import Migrate
+# from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
-login_manager = LoginManager()
-migrate = Migrate()
+# from app import app, db
+
+# db = SQLAlchemy(app)
+# login_manager = LoginManager()
+# migrate = Migrate(app, db)

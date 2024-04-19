@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-.env
-=======
 .env
 __pycache__/
 .vscode
 venv/
->>>>>>> cabf5b5b97a2e82ff01e5d1c4308a631f5d67453

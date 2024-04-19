@@ -7,11 +7,11 @@ from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_manager,
                          login_required, login_user, logout_user)
 
-# from app import db, login_manager
-from extensions import db, login_manager
+from app import db, login_manager
 from modules.intake.models import Semester
 from modules.user.models import User
-from . models import Event
+
+from .models import Event
 
 event_bp = Blueprint('event', __name__, url_prefix='/event')
 
@@ -36,12 +36,11 @@ def create():
         if start_date < datetime.now():
             flash('Start date can not be before today', 'danger')
             return redirect(url_for('event.create'))
-        #validate end date
+
         end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M")
         if end_date < start_date:
             flash('End date can not be before start date', 'danger')
             return redirect(url_for('event.create'))
-
 
         event = Event(title=title, description=description, start_date=start_date, end_date=end_date, venue=venue)
         db.session.add(event)
@@ -56,9 +55,12 @@ def create():
 @event_bp.route('/list')
 @login_required
 def list():
-    delete_expired_event()
     events = Event.query.all()
-    total_events = Event.query.count()
+    
+    events = [event for event in events if event.end_date > datetime.now()]
+    
+    total_events = len(events)
+    
     return render_template('events/list.html', events=events, total_events=total_events)
 
 @event_bp.route('/show/<int:event_id>')
@@ -78,16 +80,6 @@ def delete(event_id):
     flash('Event deleted successfully', 'success')
     return redirect(url_for('event.list'))
 
-#auto delete expired event
-def delete_expired_event():
-    events = Event.query.all()
-    for event in events:
-        # end_date = datetime.strptime(event.end_date, "%Y-%m-%dT%H:%M")
-        if event.end_date < datetime.now():
-            db.session.delete(event)
-            db.session.commit()
-
-#start date can not be before today
 def validate_start_date(start_date):
     start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M")
     if start_date < datetime.now():

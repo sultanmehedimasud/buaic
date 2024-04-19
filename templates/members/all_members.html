@@ -1,82 +1,84 @@
 {% extends "base.html" %} {% block title %}All Members{% endblock %} {% block
 content %}
-<div class="container mx-auto">
-  <h1 class="my-8 text-3xl font-bold text-center">All Members</h1>
+<div class="container mx-auto min-h-screen">
+  <div>
+    <h1 class="my-8 text-3xl font-bold text-center">All Members</h1>
 
-  <!-- Search Field and Filters Row -->
-  <div class="flex mb-4">
-    <!-- Search Field -->
-    <div class="w-1/2 mr-4">
-      <label for="search" class="block">Search by Name:</label>
-      <input
-        type="text"
-        id="search"
-        placeholder="Search members..."
-        class="border rounded-md px-4 py-2 w-full"
-      />
+    <!-- Search Field and Filters Row -->
+    <div class="flex mb-4">
+      <!-- Search Field -->
+      <div class="w-1/2 mr-4">
+        <label for="search" class="block">Search by Name:</label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search members..."
+          class="border rounded-md px-4 py-2 w-full"
+        />
+      </div>
+
+      <!-- Designation Filter -->
+      <div class="w-1/4 mr-4">
+        <label for="designation" class="block">Filter by Designation:</label>
+        <select id="designation" class="border rounded-md px-4 py-2 w-full">
+          <option value="">All</option>
+          <option value="Governing Body Members">Governing Body Members</option>
+          <option value="Director">Director</option>
+          <option value="Assistant Director">Assistant Director</option>
+          <option value="Senior Executive">Senior Executive</option>
+          <option value="Executive">Executive</option>
+          <option value="General Member">General Member</option>
+        </select>
+      </div>
+
+      <!-- Department Filter -->
+      <div class="w-1/4">
+        <label for="department" class="block">Filter by Department:</label>
+        <select id="department" class="border rounded-md px-4 py-2 w-full">
+          <option value="">All</option>
+          <option value="Communication and Marketing">
+            Communication and Marketing
+          </option>
+          <option value="Creative">Creative</option>
+          <option value="Event Management">Event Management</option>
+          <option value="Finance">Finance</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Press Release and Publications">
+            Press Release and Publications
+          </option>
+          <option value="Research and Development">
+            Research and Development
+          </option>
+        </select>
+      </div>
     </div>
 
-    <!-- Designation Filter -->
-    <div class="w-1/4 mr-4">
-      <label for="designation" class="block">Filter by Designation:</label>
-      <select id="designation" class="border rounded-md px-4 py-2 w-full">
-        <option value="">All</option>
-        <option value="Governing Body Members">Governing Body Members</option>
-        <option value="Director">Director</option>
-        <option value="Assistant Director">Assistant Director</option>
-        <option value="Senior Executive">Senior Executive</option>
-        <option value="Executive">Executive</option>
-        <option value="General Member">General Member</option>
-      </select>
+    <!-- Members Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+      <table class="table-auto w-full" id="members-table">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-6 py-3 text-center">Student ID</th>
+            <th class="px-6 py-3 text-center">Name</th>
+            <th class="px-6 py-3 text-center">BUAIC Department</th>
+            <th class="px-6 py-3 text-center">BUAIC Designation</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {% for member in members %}
+          <tr
+            class="hover:bg-gray-100 member-row hover:cursor-pointer"
+            data-url="{{ url_for('members.user_profile', user_id=member.id) }}"
+          >
+            <td class="px-6 py-4 text-center">{{ member.student_id }}</td>
+            <td class="px-6 py-4 text-center">{{ member.name }}</td>
+            <td class="px-6 py-4 text-center">{{ member.department }}</td>
+            <td class="px-6 py-4 text-center">{{ member.designation }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-
-    <!-- Department Filter -->
-    <div class="w-1/4">
-      <label for="department" class="block">Filter by Department:</label>
-      <select id="department" class="border rounded-md px-4 py-2 w-full">
-        <option value="">All</option>
-        <option value="Communication and Marketing">
-          Communication and Marketing
-        </option>
-        <option value="Creative">Creative</option>
-        <option value="Event Management">Event Management</option>
-        <option value="Finance">Finance</option>
-        <option value="Human Resources">Human Resources</option>
-        <option value="Press Release and Publications">
-          Press Release and Publications
-        </option>
-        <option value="Research and Development">
-          Research and Development
-        </option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Members Table -->
-  <div class="bg-white shadow-md rounded-lg overflow-x-auto">
-    <table class="table-auto w-full" id="members-table">
-      <thead class="bg-gray-200">
-        <tr>
-          <th class="px-6 py-3 text-center">Student ID</th>
-          <th class="px-6 py-3 text-center">Name</th>
-          <th class="px-6 py-3 text-center">BUAIC Department</th>
-          <th class="px-6 py-3 text-center">BUAIC Designation</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200">
-        {% for member in members %}
-        <tr
-          class="hover:bg-gray-100 member-row hover:cursor-pointer"
-          data-url="{{ url_for('members.user_profile', user_id=member.id) }}"
-        >
-          <td class="px-6 py-4 text-center">{{ member.student_id }}</td>
-          <td class="px-6 py-4 text-center">{{ member.name }}</td>
-          <td class="px-6 py-4 text-center">{{ member.department }}</td>
-          <td class="px-6 py-4 text-center">{{ member.designation }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
 </div>
 

@@ -51,48 +51,6 @@ def get_last_semester():
     else:
         return 'Default Semester'
 
-@user_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        student_id = request.form.get('student_id')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        semester = request.form.get('semester')
-        dob = datetime.strptime(request.form.get('dob'), '%Y-%m-%d').date()
-        blood_group = request.form.get('blood_group')
-        preferred_department = request.form.get('preferred_department')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-        
-        if password != confirm_password:
-            flash('Passwords do not match.')
-            return redirect(url_for('user.register'))
-        
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        last_semester = get_last_semester()
-
-        user = User(
-            name=name,
-            student_id=student_id,
-            email=email,
-            phone=phone,
-            semester=semester,
-            dob=dob,
-            blood_group=blood_group,
-            department=preferred_department,
-            joined_semester=last_semester,
-            _password=hashed_password,
-        )
-        
-        db.session.add(user)
-        db.session.commit()
-    
-        flash('Registration pending approval.')
-        return redirect(url_for('home'))
-
-    return render_template('auth/registration.html')
 
 @user_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -118,13 +76,6 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'success')
     return redirect(url_for('home'))
-
-
-
-
-
-
-
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
@@ -185,7 +136,7 @@ def register():
             blood_group=blood_group,
             department=preferred_department,
             joined_semester=last_semester,
-            password=hashed_password,
+            _password=hashed_password,
         )
         
         db.session.add(user)
@@ -276,11 +227,10 @@ def edit_profile():
         flash('User not found.', 'danger')
         return redirect(url_for('home'))
       
-
-    
     if request.method == 'POST':
         name = request.form.get('name')
         student_id = request.form.get('student_id')
+        rfid = request.form.get('rfid')
         email = request.form.get('email')
         phone = request.form.get('phone')
         semester = request.form.get('semester')
@@ -311,6 +261,7 @@ def edit_profile():
         user.name = name
         
         user.student_id = student_id
+        user.rfid = rfid
         user.email = email
         user.phone = phone
         user.semester = semester

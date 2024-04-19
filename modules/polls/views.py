@@ -6,13 +6,12 @@ from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_manager,
                          login_required, login_user, logout_user)
 
-# from app import db, login_manager
-from extensions import db, login_manager
+from app import db, login_manager
+# from extensions import db, login_manager
 from modules.intake.models import Semester
 from modules.user.models import User
-from flask import request
 
-from . models import Polls
+from .models import Polls
 
 polls_bp = Blueprint('polls', __name__, url_prefix='/polls')
 

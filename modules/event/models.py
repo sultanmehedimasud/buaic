@@ -1,6 +1,8 @@
-from flask_bcrypt import Bcrypt
 from datetime import datetime
-from extensions import db, login_manager, migrate 
+
+from flask_bcrypt import Bcrypt
+
+from app import db, login_manager, migrate
 
 bcrypt = Bcrypt()
 

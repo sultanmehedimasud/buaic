@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% block title %}Book Room{% endblock %} {% block
+content %}
+<div class="bg-gray-100 flex justify-center items-center mx-auto">
+  {% if not rooms %}
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-700">
+      No rooms available right now!
+    </h1>
+    <a href="{{ url_for('home') }}" class="text-blue-500">Go back</a>
+  </div>
+  {% else %}
+  <div class="bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Book Room</h2>
+    <form action="{{ url_for('resources.booking') }}" method="post">
+      <div class="mb-4">
+        <label for="room-id" class="block">Choose Room:</label>
+        <select
+          id="room-id"
+          name="room-id"
+          required
+          class="border border-gray-300 px-4 py-2 rounded-md w-full"
+        >
+          {% for room in rooms %}
+          <option value="{{ room.id }}">{{ room.room_number }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="start-time" class="block">Start Time:</label>
+        <input
+          type="datetime-local"
+          id="start-time"
+          name="start-time"
+          required
+          class="border border-gray-300 px-4 py-2 rounded-md w-full"
+        />
+      </div>
+      <div class="mb-4">
+        <label for="end" class="block">End Time:</label>
+        <input
+          type="datetime-local"
+          id="end-time"
+          name="end-time"
+          required
+          class="border border-gray-300 px-4 py-2 rounded-md w-full"
+        />
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">
+        Book Room
+      </button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

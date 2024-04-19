@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto">
+  {% if events %}
+  <h2 class="text-2xl font-bold mb-4">Select an Event</h2>
+  <form method="post">
+    <div class="mb-4">
+      <label for="event" class="block text-gray-700 font-bold mb-2"
+        >Event:</label
+      >
+      <select
+        name="event_id"
+        class="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:border-indigo-500"
+      >
+        {% for event in events %}
+        <option value="{{ event.id }}">
+          {{ event.title }} at {{ event.venue }} on {{
+          event.start_date.strftime('%d %B %Y') }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <button
+      type="submit"
+      class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+    >
+      Submit
+    </button>
+  </form>
+  {% else %}
+  <p>No events found.</p>
+  {% endif %}
+</div>
+{% endblock %}

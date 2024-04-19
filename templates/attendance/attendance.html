@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BUAIC Members Attendance System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/js/bootstrap.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background-color: black;
+        color: white;
+        font-family: "Space Grotesk", sans-serif;
+        cursor: pointer;
+      }
+
+      .invisible-input {
+        height: 70vh;
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        color: transparent;
+        cursor: pointer;
+      }
+
+      .invisible-input:focus {
+        outline: none;
+      }
+
+      .invisible-input::placeholder {
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      .name,
+      .designation,
+      .department,
+      .time-stamp {
+        font-weight: 500;
+        margin: 0.5rem 0;
+        color: black;
+      }
+
+      .modal#statusSuccessModal .modal-content {
+        border-radius: 30px;
+      }
+      .modal#statusSuccessModal .modal-content svg {
+        width: 100px;
+        display: block;
+        margin: 0 auto;
+      }
+      .modal#statusSuccessModal .modal-content .path {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 0;
+      }
+      .modal#statusSuccessModal .modal-content .path.circle {
+        -webkit-animation: dash 0.9s ease-in-out;
+        animation: dash 0.9s ease-in-out;
+      }
+      .modal#statusSuccessModal .modal-content .path.line {
+        stroke-dashoffset: 1000;
+        -webkit-animation: dash 0.95s 0.35s ease-in-out forwards;
+        animation: dash 0.95s 0.35s ease-in-out forwards;
+      }
+      .modal#statusSuccessModal .modal-content .path.check {
+        stroke-dashoffset: -100;
+        -webkit-animation: dash-check 0.95s 0.35s ease-in-out forwards;
+        animation: dash-check 0.95s 0.35s ease-in-out forwards;
+      }
+
+      @-webkit-keyframes dash {
+        0% {
+          stroke-dashoffset: 1000;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes dash {
+        0% {
+          stroke-dashoffset: 1000;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      @-webkit-keyframes dash {
+        0% {
+          stroke-dashoffset: 1000;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes dash {
+        0% {
+          stroke-dashoffset: 1000;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      @-webkit-keyframes dash-check {
+        0% {
+          stroke-dashoffset: -100;
+        }
+        100% {
+          stroke-dashoffset: 900;
+        }
+      }
+      @keyframes dash-check {
+        0% {
+          stroke-dashoffset: -100;
+        }
+        100% {
+          stroke-dashoffset: 900;
+        }
+      }
+      .box00 {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container text-center mt-5">
+      <h1>BUAIC Members Attendance System</h1>
+      <input
+        type="text"
+        id="rfid-input"
+        class="invisible-input"
+        autofocus
+        autocomplete="off"
+        placeholder="Scan your RFID card to check-in"
+        {%
+        if
+        not
+        event_id
+        %}
+        disabled
+        {%
+        endif
+        %}
+      />
+    </div>
+
+    <div class="modal fade" id="statusSuccessModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center p-lg-4">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 130.2 130.2"
+            >
+              <circle
+                class="path circle"
+                fill="none"
+                stroke="#198754"
+                stroke-width="6"
+                stroke-miterlimit="10"
+                cx="65.1"
+                cy="65.1"
+                r="62.1"
+              />
+              <polyline
+                class="path check"
+                fill="none"
+                stroke="#198754"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-miterlimit="10"
+                points="100.2,40.2 51.5,88.8 29.8,67.5 "
+              />
+            </svg>
+            <h4 class="text-success mt-3">Completed!</h4>
+            <h5 class="mt-3 name"></h5>
+            <p class="mt-3 department"></p>
+            <p class="mt-3 designation"></p>
+            <p class="mt-3 time-stamp"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let attendanceData = [];
+      let eventId = {{ event_id }};
+
+      function getFormattedTimestamp() {
+          const now = new Date();
+          return (
+              "Sign In: " +
+              now.toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+              })
+          );
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+          const membersDatabase = {{ users | tojson }};
+
+          function getMemberDetailsByRFID(rfidTag) {
+              return new Promise((resolve, reject) => {
+                  const member = membersDatabase.find(
+                      (member) => member.rfid === rfidTag
+                  );
+                  if (member) {
+                      resolve({ ...member, timestamp: getFormattedTimestamp() });
+                  } else {
+                      reject("Member not found");
+                  }
+              });
+          }
+
+          const rfidInput = document.getElementById("rfid-input");
+
+          rfidInput.addEventListener("change", function (e) {
+              var rfidTag = e.target.value.trim();
+              if (rfidTag.length === 10 && !isNaN(rfidTag)) {
+                  getMemberDetailsByRFID(rfidTag)
+                      .then((memberDetails) => {
+
+                          if (attendanceData.some((data) => data.student_id === memberDetails.student_id)) {
+                            console.log('Already checked in');
+                            e.target.value = ""
+                          }
+                          else {
+                            attendanceData.push({ student_id: memberDetails.student_id, timestamp: memberDetails.timestamp});
+
+                            document.querySelector(".modal .name").textContent =
+                              memberDetails.name;
+                            document.querySelector(".modal .department").textContent =
+                                memberDetails.department;
+                            document.querySelector(".modal .designation").textContent =
+                                memberDetails.designation;
+                            document.querySelector(".modal .time-stamp").textContent =
+                                memberDetails.timestamp;
+
+                            var successModal = new bootstrap.Modal(
+                                document.getElementById("statusSuccessModal")
+                            );
+                            successModal.show();
+
+                            e.target.value = "";
+
+                          }
+                      })
+                      .catch((error) => {
+                          console.error(error);
+                          e.target.value = "";
+                      });
+              } else {
+                  e.target.value = "";
+              };
+          });
+
+          document
+              .getElementById("statusSuccessModal")
+              .addEventListener("hidden.bs.modal", function () {
+                  rfidInput.focus();
+              });
+
+              window.addEventListener('beforeunload', function (e) {
+                e.preventDefault();
+                if (attendanceData.length > 0 && eventId) {
+                    const dataToSend = {
+                        attendanceData: attendanceData,
+                        event_id: eventId
+                    };
+
+                    console.log('Data to send:', dataToSend);  // Add this line
+
+                    fetch('/attendance/save_attendance', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(dataToSend)  // Change this line
+                  })
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error('Failed to save attendance data');
+                      }
+                  })
+                  .catch(error => console.error('Error:', error));
+                }
+            });
+      });
+    </script>
+  </body>
+</html>
