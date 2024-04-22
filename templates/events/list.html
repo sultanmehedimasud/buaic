@@ -7,7 +7,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
       {% for event in events %} {% if event.end_date >= now %}
       <div
-        class="rounded-md overflow-hidden shadow-md bg-blue-500 text-white/95 cursor-pointer"
+        class="rounded-md overflow-hidden shadow-md bg-[#2A5CAA] text-white/95 cursor-pointer"
       >
         <div
           class="p-4"
@@ -29,7 +29,10 @@
               action="{{ url_for('event.delete', event_id=event.id) }}"
               method="post"
             >
-              <button type="submit" class="text-red-800 hover:text-red-600">
+              <button
+                type="submit"
+                class="text-red-700 font-bold py-2 px-3 rounded-md bg-red-200"
+              >
                 Delete
               </button>
             </form>
@@ -59,7 +62,7 @@
     <div class="mt-8">
       <a
         href="{{ url_for('event.create') }}"
-        class="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+        class="bg-[#2A5CAA] text-white font-bold py-2 px-4 rounded"
         >Create new event</a
       >
     </div>

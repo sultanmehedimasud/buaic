@@ -22,7 +22,7 @@ content %}
                   <!-- Legends -->
                   <div class="mb-4">
                     <div class="flex items-center">
-                      <div class="w-2 h-2 bg-blue-600 mr-2 rounded-full"></div>
+                      <div class="w-2 h-2 bg-[#2A5CAA] mr-2 rounded-full"></div>
                       <div class="text-sm text-gray-700">Votes</div>
                     </div>
                   </div>
@@ -55,7 +55,7 @@ content %}
                       >
                         <div
                           :style="`height: ${data}rem`"
-                          class="transition ease-in duration-200 bg-blue-600 hover:bg-blue-400 relative"
+                          class="transition ease-in duration-200 bg-[#2A5CAA] hover:bg-[#09377c] relative"
                           @mouseenter="showTooltip($event); tooltipOpen = true"
                           @mouseleave="hideTooltip($event)"
                         >
@@ -95,7 +95,7 @@ content %}
                 <div class="mt-16 flex justify-center items-center gap-2">
                   {% if user_voted %} {% else %}
                   <button
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    class="bg-[#2A5CAA] hover:bg-[#09377c] text-white font-bold py-2 px-4 rounded"
                     onclick="location.href='/polls/vote/{{poll.id}}'"
                   >
                     Vote

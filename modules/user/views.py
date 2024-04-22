@@ -47,13 +47,9 @@ def send_otp_email(user, email):
     db.session.commit()
     print(generated_otp)
     msg = Message(subject='BUAIC Portal 2FA OTP', sender='sabbirwasif27@gmail.com', recipients=[email])
-    msg.body = f'''To login to your account, use the following OTP:
-    
-                {generated_otp}
-
-                If you did not make this request then simply ignore this email and no changes will be made.
+    msg.body = f'''To login to your account, use the following OTP: {generated_otp}
+    If you did not make this request then simply ignore this email and no changes will be made.
                 '''
-    
     mail.send(msg)
 
 def get_last_semester():
@@ -129,23 +125,39 @@ def login():
         password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
 
-        if user and user.check_password(password) and user.tfa:
-            
-            send_otp_email(user, email)
-            
-            login_user(user)
-            session['user_id'] = user.id
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
-        elif user and user.check_password(password):
-            login_user(user)
-            session['user_id'] = user.id
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+        if user and user.check_password(password):
+            if user.tfa:
+                # If 2FA is enabled, send OTP and open OTP verification popup
+                send_otp_email(user, email)
+                session['email'] = email  # Store email in session for OTP verification
+                return render_template('auth/login.html', show_tfa_popup=True)
+            else:
+                # If 2FA is not enabled, proceed with login
+                login_user(user)
+                session['user_id'] = user.id
+                flash('Login successful!', 'success')
+                return redirect(url_for('home'))
         else:
             flash('Login failed. Check your email and password.', 'danger')
 
-    return render_template('auth/login.html')
+    return render_template('auth/login.html', show_tfa_popup=False)
+
+
+@user_bp.route('/verify-otp', methods=['POST'])
+def verify_otp():
+    otp = request.form.get('otp')
+    email = session.get('email')
+    user = User.query.filter_by(email=email).first()
+
+    if user and user.otp == otp:
+        login_user(user)
+        session['user_id'] = user.id
+        flash('Login successful!', 'success')
+        return redirect(url_for('home'))
+    else:
+        flash('Incorrect OTP. Please try again.', 'danger')
+        return redirect(url_for('user.login'))
+
 
 
 def is_strong_password(password):

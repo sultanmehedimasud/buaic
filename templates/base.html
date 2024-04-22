@@ -30,7 +30,7 @@
           <div class="lg:flex lg:items-center lg:justify-between">
             <div class="flex items-center justify-between">
               <a href="/">
-                <h1 class="text-3xl font-bold text-blue-700">BUAIC</h1>
+                <img src="{{ url_for('static', filename='img/buaic-logo-dark.png') }}" alt="logo" class="w-32 h-8" />
               </a>
       
               <!-- Mobile menu button -->
@@ -439,8 +439,12 @@
         <div class="lg:flex">
           <div class="w-full lg:w-2/5">
             <div class="px-6">
-              <a href="#">
-                <h1 class="text-3xl font-bold text-gray-400">BUAIC</h1>
+              <a href="/">
+                <img
+                  src="{{ url_for('static', filename='img/buaic-logo-light.png') }}"
+                  alt="logo"
+                  class="w-32 h-8"
+                />
               </a>
 
               <p class="max-w-sm mt-2 text-gray-400">
