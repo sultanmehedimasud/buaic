@@ -1,9 +1,8 @@
 from datetime import datetime
 from xml.dom import ValidationErr
 
-from flask import (Blueprint, flash, redirect, render_template, request,
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
                    session, url_for)
-from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_manager,
                          login_required, login_user, logout_user)
 
@@ -15,7 +14,6 @@ from modules.user.models import User
 from . import event_bp
 from .models import Event
 
-bcrypt = Bcrypt()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -24,6 +22,9 @@ def load_user(user_id):
 @event_bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
+        
     if request.method == 'POST':
         title = request.form['title'].upper()
         description = request.form['description']
@@ -54,6 +55,10 @@ def create():
 @event_bp.route('/list')
 @login_required
 def list():
+    
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
+        
     events = Event.query.order_by(Event.start_date.desc()).all()
     now = datetime.now()
     
@@ -63,6 +68,9 @@ def list():
 @event_bp.route('/delete/<int:event_id>', methods=['GET', 'POST'])
 @login_required
 def delete(event_id):
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
+        
     if request.method == 'POST':
         event = Event.query.get(event_id)
         attendances = Attendance.query.filter_by(event_id=event_id).all()

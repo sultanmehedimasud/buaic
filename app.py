@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-from flask import Flask, flash, render_template
+from flask import Flask, abort, flash, render_template
 from flask_login import LoginManager
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
@@ -81,6 +81,33 @@ def contact():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.errorhandler(403)
+def forbidden_error(error):
+    code_msg = "403 - Forbidden"
+    msg = "You do not have permission to access this page."
+    return render_template('error.html', code_msg=code_msg, msg=msg), 403
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    code_msg = "404 - Not Found"
+    msg = "The page you are looking for does not exist."
+    return render_template('error.html', code_msg=code_msg, msg=msg), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    code_msg = "500 - Internal Server Error"
+    msg = "Something went wrong on our end. Please try again later."
+    return render_template('error.html', code_msg=code_msg, msg=msg), 500
+
+@app.errorhandler(401)
+def unauthorized_error(error):
+    code_msg = "401 - Unauthorized"
+    msg = "You are not authorized to access this page."
+    return render_template('error.html', code_msg=code_msg, msg=msg), 401
+
 
 if __name__ == '__main__':
     app.run(debug=True)

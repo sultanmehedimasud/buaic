@@ -3,7 +3,7 @@ import secrets
 import string
 from datetime import datetime
 
-from flask import (Blueprint, flash, redirect, render_template, request,
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
                    session, url_for)
 from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, current_user, login_manager,
@@ -45,7 +45,7 @@ def send_otp_email(user, email):
     generated_otp = ''.join(secrets.choice(string.digits) for _ in range(6))    
     user.otp = generated_otp
     db.session.commit()
-    print(generated_otp)
+
     msg = Message(subject='BUAIC Portal 2FA OTP', sender='sabbirwasif27@gmail.com', recipients=[email])
     msg.body = f'''To login to your account, use the following OTP: {generated_otp}
     If you did not make this request then simply ignore this email and no changes will be made.
@@ -141,23 +141,6 @@ def login():
             flash('Login failed. Check your email and password.', 'danger')
 
     return render_template('auth/login.html', show_tfa_popup=False)
-
-
-@user_bp.route('/verify-otp', methods=['POST'])
-def verify_otp():
-    otp = request.form.get('otp')
-    email = session.get('email')
-    user = User.query.filter_by(email=email).first()
-
-    if user and user.otp == otp:
-        login_user(user)
-        session['user_id'] = user.id
-        flash('Login successful!', 'success')
-        return redirect(url_for('home'))
-    else:
-        flash('Incorrect OTP. Please try again.', 'danger')
-        return redirect(url_for('user.login'))
-
 
 
 def is_strong_password(password):

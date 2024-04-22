@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import (Blueprint, flash, redirect, render_template, request,
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
                    session, url_for)
 from flask_login import current_user, login_manager, login_required
 
@@ -17,6 +17,8 @@ def load_user(user_id):
 @polls_bp.route('/polls/create_poll', methods=['GET', 'POST'])
 @login_required
 def create_poll():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
     if request.method == 'POST':
         question = request.form.get('question')
         option1 = request.form.get('option1')
@@ -102,6 +104,8 @@ def vote(poll_id):
 @polls_bp.route('/polls/delete_poll/<int:poll_id>')
 @login_required
 def delete_poll(poll_id):
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
     poll = Polls.query.get(poll_id)
     voted = Voted.query.filter_by(poll_id=poll_id).all()
 

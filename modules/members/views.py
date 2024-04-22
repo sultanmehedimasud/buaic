@@ -1,7 +1,8 @@
 import csv
 from datetime import datetime
 
-from flask import Blueprint, Response, flash, render_template
+from flask import Blueprint, Response, abort, flash, render_template
+from flask_login import current_user, login_required
 
 from app import db
 from modules.user.models import User
@@ -9,7 +10,10 @@ from modules.user.models import User
 members_bp = Blueprint('members', __name__, url_prefix='/members')
 
 @members_bp.route('/all-members')
+@login_required
 def all_members():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
     members = User.query.all()
     
     department_order = [
@@ -37,13 +41,19 @@ def all_members():
 
 
 @members_bp.route('/member/<int:user_id>')
+@login_required
 def user_profile(user_id):
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
     user = User.query.get_or_404(user_id)
     return render_template('members/member_details.html', user=user)
 
 
 @members_bp.route('/export_csv')
+@login_required
 def export_csv():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
     members = User.query.all()
     with open('members.csv', mode='w', newline='') as csvfile:
         writer = csv.writer(csvfile)

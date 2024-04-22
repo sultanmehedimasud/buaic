@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from flask import flash, jsonify, redirect, render_template, request, url_for
-from flask_login import login_required
+from flask import (abort, flash, jsonify, redirect, render_template, request,
+                   url_for)
+from flask_login import current_user, login_required
 
 from app import db
 from modules.event.models import Event
@@ -15,6 +16,9 @@ from .models import Attendance
 @login_required
 def record_attendance():
     if request.method == 'GET':
+        if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+            abort(403)
+        
         all_users = User.query.with_entities(User.student_id, User.rfid, User.name, User.department, User.designation).all()
 
         serialized_users = [
@@ -32,9 +36,12 @@ def record_attendance():
     return render_template('attendance/attendance.html', users=serialized_users, event_id=event_id)
 
 
-@attendance_bp.route('/save_attendance', methods=['POST'])
+@attendance_bp.route('/save_attendance', methods=['POST', 'GET'])
 @login_required
 def save_attendance():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+            abort(403)
+            
     if request.method == 'POST':
         attendance_data = request.json
         

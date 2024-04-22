@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from flask import flash, redirect, render_template, request, url_for
-from flask_login import current_user
+from flask import abort, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
 from . import resource_bp
 from .models import Booking, Room, db
@@ -20,7 +20,11 @@ def remove_expired_bookings():
 
 
 @resource_bp.route('/resources/add_room', methods=['GET', 'POST'])
+@login_required
 def add_room():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
+        
     if request.method == 'POST':
         room_number = request.form.get('room_number')
         if Room.query.filter_by(room_number=room_number).first():
@@ -38,13 +42,21 @@ def add_room():
 
 
 @resource_bp.route('/resources/rooms', methods=['GET', 'POST'])
+@login_required
 def rooms():
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
+        
     rooms = Room.query.all()
     return render_template('resources/rooms.html', rooms=rooms)
 
 
 @resource_bp.route('/resources/edit_room/<int:room_id>', methods=['GET', 'POST'])
+@login_required
 def edit_room(room_id):
+    
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
     
     room = Room.query.get(room_id)
     
@@ -65,7 +77,11 @@ def edit_room(room_id):
         return render_template('resources/edit_room.html', room=room)
     
 @resource_bp.route('/resources/delete_room/<int:room_id>', methods=['GET', 'POST'])
+@login_required
 def delete_room(room_id):
+    if current_user.designation not in ['Governing Body', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Director', 'Assistant Director']:
+        abort(403)
+        
     room = Room.query.get(room_id)
     Booking.query.filter_by(room_id=room_id).delete()
     
@@ -83,12 +99,14 @@ def delete_room(room_id):
 
 
 @resource_bp.route('/resources/book_room', methods=['GET'])
+@login_required
 def book_room():
     if request.method == 'GET':
         available_rooms = Room.query.filter_by(booked=False).all()
         return render_template('resources/book_room.html', rooms=available_rooms)
 
 @resource_bp.route('/resources/booking', methods=['POST'])
+@login_required
 def booking():
     if request.method == 'POST':
         room_id = request.form.get('room-id')
@@ -108,6 +126,7 @@ def booking():
     return redirect(url_for('resources.book_room'))
 
 @resource_bp.route('/resources/my_bookings')
+@login_required
 def my_bookings():
     my_bookings = Booking.query.filter_by(booked_by=current_user.id).all()
     rooms = Room.query.all()
@@ -115,6 +134,7 @@ def my_bookings():
     return render_template('resources/my_bookings.html', my_bookings=my_bookings, rooms = rooms)
 
 @resource_bp.route('/resources/cancel_booking/<int:booking_id>', methods=['POST'])
+@login_required
 def cancel_booking(booking_id):
     if request.method == 'POST':
         booking = Booking.query.get(booking_id)
