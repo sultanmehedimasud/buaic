@@ -96,7 +96,7 @@ button:focus {
 }
 
 input:checked + .slider {
-  background-color: #2196f3;
+  background-color: #2a5caa;
 }
 
 input:focus + .slider {
