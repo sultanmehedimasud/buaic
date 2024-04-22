@@ -156,6 +156,12 @@
         endif
         %}
       />
+      <button
+        id="saveAttendanceButton"
+        class="btn btn-primary flex items-center"
+      >
+        Save Attendance
+      </button>
     </div>
 
     <div class="modal fade" id="statusSuccessModal" tabindex="-1" role="dialog">
@@ -277,31 +283,31 @@
                   rfidInput.focus();
               });
 
-              window.addEventListener('beforeunload', function (e) {
-                e.preventDefault();
+              document.getElementById("saveAttendanceButton").addEventListener("click", function () {
                 if (attendanceData.length > 0 && eventId) {
                     const dataToSend = {
                         attendanceData: attendanceData,
                         event_id: eventId
                     };
 
-                    console.log('Data to send:', dataToSend);  // Add this line
-
                     fetch('/attendance/save_attendance', {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify(dataToSend)  // Change this line
-                  })
-                  .then(response => {
-                      if (!response.ok) {
-                          throw new Error('Failed to save attendance data');
-                      }
-                  })
-                  .catch(error => console.error('Error:', error));
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to save attendance data');
+                        }
+                        window.location.href = '/event/list';
+                    })
+                    .catch(error => console.error('Error:', error));
                 }
             });
+
+
       });
     </script>
   </body>

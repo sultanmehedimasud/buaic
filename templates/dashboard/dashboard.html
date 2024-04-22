@@ -1,55 +1,60 @@
-{% extends 'base.html' %} 
-{% block title %}Dashboard{% endblock %} 
-{% block content%}
-<h1 class="text-center">Dashboard</h1>
-<div class="container mx-auto mt-8 flex justify-left  items-center">
-  <div class="bg-white p-8 shadow-md rounded-md w-96">
-    <h1 class="text-3xl font-bold mb-6">Upcoming Event</h1>
-    {% if next_event is not none %}
-    <div id="event-details">
-          <p><h2><strong>Event:</strong> <a href="/event/show/{{ next_event.id }}">{{ next_event.title }}</a></h2></p>
-          <p><strong>Description:</strong> {{ next_event.description }}</p>
-          <p><strong>Venue:</strong> {{ next_event.venue }}</p>
-          <div class="flex flex-row"><strong>Starts In:</strong><div id="countdown"></div></div>
+{% extends 'base.html' %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<div class="container mx-auto min-h-screen">
+  <div>
+    <h1 class="my-8 text-3xl font-bold text-center">Dashboard</h1>
+
+    <div class="bg-blue-500 text-white/95 p-8 shadow-md rounded-md w-96">
+      <h2 class="text-3xl font-bold mb-6">Upcoming Event</h2>
+      {% if next_event %}
+      <div id="event-details">
+        <p class="pb-2"><strong>Event Name:</strong> {{ next_event.title }}</p>
+        <p class="pb-2"><strong>Description:</strong> {{ next_event.description }}</p>
+        <p class="pb-2"><strong>Venue:</strong> {{ next_event.venue }}</p>
+        <div id="countdown"></div>
+      </div>
+      {% else %}
+      <p>No upcoming events.</p>
+      {% endif %}
     </div>
-
-    {% else %}
-    <p>No upcoming events.</p>
-    {% endif %}
   </div>
-  <script>
-    var countDownDate = new Date("{{ next_event.start_date.isoformat() }}").getTime();
-
-    var x = setInterval(function() {
-
-    var now = new Date().getTime();
-
-    var distance = countDownDate - now;
-
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    if (days > 0) {
-      document.getElementById("countdown").innerHTML = `<p> ${days}d ${hours}h ${minutes}m ${seconds}s</p>`;
-      } else if (hours > 0) {
-        document.getElementById("countdown").innerHTML = `<p> ${hours}h ${minutes}m ${seconds}s</p>`;
-      } else if (minutes > 0) {
-        document.getElementById("countdown").innerHTML = `<p> ${minutes}m ${seconds}s</p>`;
-      } else {
-        document.getElementById("countdown").innerHTML = `<p> ${seconds}s</p>`;
-    }
-
-    if (distance < 0) {
-      clearInterval(x);
-      document.getElementById("countdown").innerHTML = "EXPIRED";  
-    }
-
-    }, 1000);
-
-  </script>
 </div>
 
+{% if next_event %}
+  <script>
+    console.log("Ami asi");
+    var countDownDate = new Date(
+      "{{ next_event.start_date.isoformat() }}"
+    ).getTime();
 
-{% endblock %}
+    var x = setInterval(function () {
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      var countdownElement = document.getElementById("countdown");
+
+      if (days > 0) {
+        countdownElement.innerHTML = ` <p class="pb-2"><strong>Starts In:</strong>  ${days}d ${hours}h ${minutes}m ${seconds}s</p>`;
+      } else if (hours > 0) {
+        countdownElement.innerHTML = ` <p class="pb-2"><strong>Starts In:</strong>  ${hours}h ${minutes}m ${seconds}s</p>`;
+      } else if (minutes > 0) {
+        countdownElement.innerHTML = ` <p class="pb-2"><strong>Starts In:</strong>  ${minutes}m ${seconds}s</p>`;
+      } else {
+        countdownElement.innerHTML = ` <p class="pb-2"><strong>Starts In:</strong>  ${seconds}s</p>`;
+      }
+
+      if (distance < 0) {
+        clearInterval(x);
+        countdownElement.innerHTML = "EXPIRED";
+      }
+    }, 1000);
+  </script>
+  {% endif %}
+
+  {% endblock %}
+</div>

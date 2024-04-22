@@ -13,9 +13,8 @@ from flask_mail import Mail, Message
 from app import db, login_manager, mail
 from modules.intake.models import Semester
 
+from . import user_bp
 from .models import User
-
-user_bp = Blueprint('user', __name__, url_prefix='/user')
 
 bcrypt = Bcrypt()
 
@@ -42,6 +41,20 @@ def send_reset_email(user, token, mail):
     
     mail.send(msg)
 
+def send_otp_email(user, email):
+    generated_otp = ''.join(secrets.choice(string.digits) for _ in range(6))    
+    user.otp = generated_otp
+    db.session.commit()
+    print(generated_otp)
+    msg = Message(subject='BUAIC Portal 2FA OTP', sender='sabbirwasif27@gmail.com', recipients=[email])
+    msg.body = f'''To login to your account, use the following OTP:
+    
+                {generated_otp}
+
+                If you did not make this request then simply ignore this email and no changes will be made.
+                '''
+    
+    mail.send(msg)
 
 def get_last_semester():
     last_semester = Semester.query.order_by(Semester.semester_name.desc()).first()
@@ -51,48 +64,6 @@ def get_last_semester():
     else:
         return 'Default Semester'
 
-
-@user_bp.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
-
-        if user and user.check_password(password):
-            login_user(user)
-            session['user_id'] = user.id
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Login failed. Check your email and password.', 'danger')
-
-    return render_template('auth/login.html')
-
-@user_bp.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    session.pop('user_id', None)
-    flash('You have been logged out.', 'success')
-    return redirect(url_for('home'))
-
-
-user_bp = Blueprint('user', __name__, url_prefix='/user')
-
-bcrypt = Bcrypt()
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-def get_last_semester():
-    last_semester = Semester.query.order_by(Semester.semester_name.desc()).first()
-
-    if last_semester:
-        return last_semester.semester_name
-    else:
-        return 'Default Semester'
 
 @user_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -112,12 +83,10 @@ def register():
             flash('Passwords do not match.')
             return redirect(url_for('user.register'))
         
-        #strong password check
         if not is_strong_password(password):
             flash('Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.', 'danger')
             return redirect(url_for('user.register'))
        
-        #phone number validation
         if not is_valid_phone(phone):
             flash('Invalid phone number.')
             return redirect(url_for('user.register'))
@@ -147,7 +116,7 @@ def register():
 
     return render_template('auth/registration.html')
 
-#function to check if phone number is valid
+
 def is_valid_phone(phone):
     if len(phone) != 11:
         return False
@@ -160,7 +129,15 @@ def login():
         password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
 
-        if user and user.check_password(password):
+        if user and user.check_password(password) and user.tfa:
+            
+            send_otp_email(user, email)
+            
+            login_user(user)
+            session['user_id'] = user.id
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))
+        elif user and user.check_password(password):
             login_user(user)
             session['user_id'] = user.id
             flash('Login successful!', 'success')
@@ -169,6 +146,7 @@ def login():
             flash('Login failed. Check your email and password.', 'danger')
 
     return render_template('auth/login.html')
+
 
 def is_strong_password(password):
     if (len(password) < 8 or
@@ -203,7 +181,7 @@ def is_strong_password(password):
             hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
             user.password = hashed_password
             db.session.commit()
-            flash('Password changed successfully.', 'success')
+            flash('Password changed successfully!', 'success')
             return redirect(url_for('home'))
         else:
             flash('Incorrect current password.', 'danger')
@@ -229,15 +207,13 @@ def edit_profile():
       
     if request.method == 'POST':
         name = request.form.get('name')
-        student_id = request.form.get('student_id')
         rfid = request.form.get('rfid')
         email = request.form.get('email')
         phone = request.form.get('phone')
         semester = request.form.get('semester')
         blood_group = request.form.get('blood_group')
-        preferred_department = request.form.get('preferred_department')
-
-
+        tfa = 'tfa' in request.form
+        
         existing_user = User.query.filter_by(phone=phone).first()
         if existing_user and existing_user.id != user.id:
             flash('This phone number is already in use.', 'danger')
@@ -247,32 +223,19 @@ def edit_profile():
         if existing_user and existing_user.id != user.id:
             flash('This email is already in use.', 'danger')
             return redirect(url_for('user.edit_profile'))
-        
-        #id check
-        existing_user = User.query.filter_by(student_id=student_id).first()
-        if existing_user and existing_user.id != user.id:
-            flash('This student ID is already in use.', 'danger')
-            return redirect(url_for('user.edit_profile'))
-        
-        
-        print(f"Phone number before saving: {phone}")
+    
 
-        
         user.name = name
-        
-        user.student_id = student_id
         user.rfid = rfid
         user.email = email
         user.phone = phone
         user.semester = semester
         user.blood_group = blood_group
-        user.department = preferred_department
+        user.tfa = tfa
 
-    
         db.session.commit()
-        
-        print(f"Phone number after saving: {user.phone}")
-        flash('Profile updated successfully.', 'success')
+
+        flash('Profile updated successfully!', 'success')
         return redirect(url_for('home'))
 
     return render_template('auth/edit_profile.html', user=user)
@@ -307,7 +270,6 @@ def forgot_password():
 
 @user_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-    print("Reset password function called")
     user = User.query.filter_by(reset_token=token).first()
     if not user:
         flash('Invalid or expired reset token.', 'danger')
@@ -322,12 +284,11 @@ def reset_password(token):
             return redirect(url_for('user.reset_password', token=token))
        
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        print(hashed_password)
         user._password = hashed_password
         user.reset_token = None
         db.session.commit()
 
-        flash('Your password has been reset successfully.', 'success')
+        flash('Your password has been reset successfully!', 'success')
         return redirect(url_for('user.login'))
 
     return render_template('auth/reset_password.html', token=token)
@@ -343,10 +304,10 @@ def change_password():
         if current_user.check_password(current_password) and new_password == confirm_password:
             current_user.set_password(new_password)
             db.session.commit()
-            flash('Password changed successfully.', 'success')
+            flash('Password changed successfully!', 'success')
             return redirect(url_for('user.login'))
         else:
-            flash('Failed to change password. Please check your input.', 'error')
+            flash('Failed to change password. Please check your input.', 'danger')
             return redirect(url_for('user.change_password'))
     
     return render_template('auth/change_password.html')

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import jsonify, redirect, render_template, request, url_for
+from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import login_required
 
 from app import db
@@ -9,17 +9,6 @@ from modules.user.models import User
 
 from . import attendance_bp
 from .models import Attendance
-
-
-@attendance_bp.route('/', methods=['GET', 'POST'])
-@login_required
-def event_input():
-    if request.method == 'POST':
-        event_id = request.form.get('event_id')
-        return redirect(url_for('attendance.record_attendance', event_id=event_id))
-
-    events = Event.query.filter(Event.end_date > datetime.now()).all()
-    return render_template('attendance/event_id_input.html', events=events)
 
 
 @attendance_bp.route('/record', methods=['GET', 'POST'])
@@ -51,11 +40,13 @@ def save_attendance():
         
         today_date = datetime.now().date()
 
+        attendance = Attendance.query.filter_by(event_id=attendance_data['event_id']).all()
+                
         for entry in attendance_data['attendanceData']:
 
             timestamp_time = datetime.strptime(entry['timestamp'], 'Sign In: %I:%M %p').time()
             formatted_timestamp = datetime.combine(today_date, timestamp_time)
-
+            
             attendance_entry = Attendance(
                 student_id=entry['student_id'],
                 timestamp=formatted_timestamp,
@@ -65,4 +56,4 @@ def save_attendance():
 
         db.session.commit()
 
-        return jsonify({'message': 'Attendance saved successfully!'}), 200
+        return url_for('event.list')

@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block title %}Edit Profile - BUAIC{% endblock %} {%
        block content %}
        <div class="container mx-auto mt-8 flex justify-center items-center">
-         <div class="bg-white p-8 shadow-md rounded-md w-96">
+         <div class="bg-white p-8 shadow-md rounded-md w-1/3">
            <h1 class="text-3xl font-bold mb-6">Edit Profile</h1>
        
            <form
@@ -17,19 +17,6 @@
                 name="name"
                 value="{{ user.name }}"
                 placeholder="Your Full Name"
-                required
-                class="border w-full p-2 rounded-md"
-              />
-            </div>
-      
-            <div>
-              <label for="student_id" class="text-sm">Student ID:</label>
-              <input
-                type="text"
-                id="student_id"
-                name="student_id"
-                placeholder="Your Student ID"
-                value="{{ user.student_id }}"
                 required
                 class="border w-full p-2 rounded-md"
               />
@@ -110,38 +97,13 @@
                 <option value="AB-" {% if user.blood_group == "AB-" %}selected{% endif %}>AB-</option>
             </select>
             </div>
-            <div>
-              <label for="preferred_department" class="text-sm"
-                >Preferred Department:</label
-              >
-              <select
-                id="preferred_department"
-                name="preferred_department"
-                required
-                class="border w-full p-2 rounded-md"
-              >
-              <option value="" disabled>Select Department</option>
-              <option value="Communication and Marketing" {% if user.department == "Communication and Marketing" %}selected{% endif %}>Communication and Marketing</option>
-              <option value="Creative" {% if user.department == "Creative" %}selected{% endif %}>Creative</option>
-              <option value="Event Management" {% if user.department == "Event Management" %}selected{% endif %}>Event Management</option>
-              <option value="Finance" {% if user.department == "Finance" %}selected{% endif %}>Finance</option>
-              <option value="Human Resources" {% if user.department == "Human Resources" %}selected{% endif %}>Human Resources</option>
-              <option value="Press Release and Publications" {% if user.department == "Press Release and Publications" %}selected{% endif %}>Press Release and Publications</option>
-              <option value="Research and Development" {% if user.department == "Research and Development" %}selected{% endif %}>Research and Development</option>
-            </select>
-            </div>
-            
-            {% with messages = get_flashed_messages() %} 
-            {% if messages %}
-            <div class="mb-4">
-              <ul class="list-disc pl-4">
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-            {% endif %} 
-            {% endwith %}
+            <div class="flex items-center justify-between mr-2">
+              <label>Two-Factor Authentication (2FA) Mode:</label>
+              <label class="switch">
+                <input type="checkbox" name="tfa" {% if user.tfa %} checked {% endif %}>
+                <span class="slider round"></span>
+              </label>
+              </div>
                 <div>
                   <button
                       type="submit"

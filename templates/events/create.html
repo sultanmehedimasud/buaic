@@ -1,64 +1,73 @@
-{% extends 'base.html' %} {% block title %}Create event{% endblock %} {% block
+{% extends 'base.html' %} {% block title %}Create Event{% endblock %} {% block
 content %}
 <div class="container mx-auto mt-8 flex justify-center items-center">
   <div class="bg-white p-8 shadow-md rounded-md w-96">
     <h1 class="text-3xl font-bold mb-6">Create Event</h1>
-    <form method="POST" action="{{ url_for('event.create')}}">
-      <div class="form-group">
-        <label for="title">Title:</label>
-        <input type="text" class="form-control" id="title" name="title" />
-      </div>
-      <div class="form-group">
-        <label for="description">Description:</label>
+    <form method="POST" action="{{ url_for('event.create')}}" class="space-y-4">
+      <div>
+        <label for="title" class="block text-gray-700 font-bold mb-2"
+          >Title:</label
+        >
         <input
           type="text"
-          class="form-control"
+          class="border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:border-blue-500"
+          id="title"
+          name="title"
+        />
+      </div>
+      <div>
+        <label for="description" class="block text-gray-700 font-bold mb-2"
+          >Description:</label
+        >
+        <input
+          type="text"
+          class="border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:border-blue-500"
           id="description"
           name="description"
         />
       </div>
-      <div class="form-group">
-        <label for="start_datetime">Start Date & Time:</label>
+      <div>
+        <label for="start_datetime" class="block text-gray-700 font-bold mb-2"
+          >Start Date & Time:</label
+        >
         <input
           type="datetime-local"
-          class="form-control"
+          class="border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:border-blue-500"
           id="start_datetime"
           name="start_datetime"
         />
       </div>
-      <div class="form-group">
-        <label for="end_datetime">End Date & Time:</label>
+      <div>
+        <label for="end_datetime" class="block text-gray-700 font-bold mb-2"
+          >End Date & Time:</label
+        >
         <input
           type="datetime-local"
-          class="form-control"
+          class="border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:border-blue-500"
           id="end_datetime"
           name="end_datetime"
         />
       </div>
-      <div class="form-group">
-        <label for="venue">Venue:</label>
-        <input type="text" class="form-control" id="venue" name="venue" />
+      <div>
+        <label for="venue" class="block text-gray-700 font-bold mb-2"
+          >Venue:</label
+        >
+        <input
+          type="text"
+          class="border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:border-blue-500"
+          id="venue"
+          name="venue"
+        />
       </div>
       <br />
-      {% with messages = get_flashed_messages() %} 
-      {% if messages %}
-      <div class="mb-4">
-        <ul class="list-disc pl-4">
-          
-          <li>{{ messages[0] }}</li>
-          
-        </ul>
-      </div>
-      {% endif %} 
-      {% endwith %}
+
       <button
         type="submit"
         class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 w-full"
       >
-        submit
+        Submit
       </button>
     </form>
   </div>
 </div>
-
 {% endblock %}

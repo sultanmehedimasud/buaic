@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-from flask import Flask, render_template
+from flask import Flask, flash, render_template
 from flask_login import LoginManager
 from flask_mail import Mail, Message
 from flask_migrate import Migrate
@@ -70,7 +70,7 @@ from modules.dashboard.views import dashboard_bp
 app.register_blueprint(dashboard_bp)
 
 
-@app.route('/home')
+@app.route('/')
 def home():
     return render_template('landing/index.html')
 

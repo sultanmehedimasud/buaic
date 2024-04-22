@@ -22,6 +22,8 @@ class User(db.Model, UserMixin):
     approved = db.Column(db.Boolean, default=False)
     designation = db.Column(db.String(20), default='General Member')
     joined_semester = db.Column(db.String(30), nullable=False)
+    tfa = db.Column(db.Boolean, default=False, nullable=False)
+    otp = db.Column(db.String(6), nullable=True)
     reset_token = db.Column(db.String(100), unique=True)
     
     def set_password(self, password):

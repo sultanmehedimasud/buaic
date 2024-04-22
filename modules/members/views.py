@@ -1,6 +1,7 @@
+import csv
 from datetime import datetime
 
-from flask import Blueprint, render_template
+from flask import Blueprint, Response, flash, render_template
 
 from app import db
 from modules.user.models import User
@@ -39,3 +40,16 @@ def all_members():
 def user_profile(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('members/member_details.html', user=user)
+
+
+@members_bp.route('/export_csv')
+def export_csv():
+    members = User.query.all()
+    with open('members.csv', mode='w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Student ID','Name', 'Email', 'Phone', 'Department', 'Designation'])
+        for member in members:
+            writer.writerow([member.student_id, member.name, member.email, member.phone, member.department, member.designation])
+    
+    flash('Excel file has been exported successfully!', 'success')
+    return Response(open('members.csv', 'r'), mimetype='text/csv', headers={"Content-disposition":"attachment; filename=members.csv"})

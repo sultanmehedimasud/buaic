@@ -1,47 +1,39 @@
-{% extends 'base.html' %} 
-{% block title %}Vote{% endblock %} 
-{% block content %}
-
+{% extends 'base.html' %} {% block title %}Vote{% endblock %} {% block content
+%}
 <div class="container mx-auto mt-8 flex justify-center items-center">
   <div class="bg-white p-8 shadow-md rounded-md w-96">
     <h1 class="text-3xl font-bold mb-6">Vote</h1>
-    
 
-    <form method="post" action="{{ url_for('polls.vote', poll_id=poll.id) }}" class="space-y-4">
+    <form
+      method="post"
+      action="{{ url_for('polls.vote', poll_id=poll.id) }}"
+      class="space-y-4"
+    >
       <div>
-        <p><h1 class="text-3xl font-bold mb-6">{{ question }}</h1></p>
+        <h2 class="text-lg font-bold mb-2">{{ question }}</h2>
       </div>
       <div>
-        {% for option in options %}
-        <label for="option-{{ option }}" class="text-sm"><h4>{{ option }}</h4> </label>
-        <input
-          type="radio"
-          name="option"
-          value="{{ option }}"
-          id="option-{{ option }}"
-          required
-          class="border w-full p-2 rounded-md"
-        />
-        {% endfor %}
+        {% for option in options %} {% if option %}
+        <div class="flex items-center mb-2">
+          <input
+            type="radio"
+            id="{{ option }}"
+            name="option"
+            value="{{ option }}"
+            class="mr-2"
+          />
+          <label for="{{ option }}" class="text-sm">{{ option }}</label>
+        </div>
+        {% endif %} {% endfor %}
       </div>
 
-      {% with messages = get_flashed_messages() %} 
-      {% if messages %}
-      <div class="mb-4">
-        <ul class="list-disc pl-4">
-          
-          <li>{{ messages[0] }}</li>
-          
-        </ul>
-      </div>
-      {% endif %} 
-      {% endwith %}
-
-      
-      <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-black rounded-md hover:bg-blue-700">Vote</button>
-      
+      <button
+        type="submit"
+        class="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Vote
+      </button>
     </form>
   </div>
 </div>
-    
-    {% endblock %}
+{% endblock %}

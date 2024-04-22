@@ -17,14 +17,10 @@ content %}
         <tbody class="divide-y divide-gray-200">
           {% for booking in my_bookings %}
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ booking.booking.booking_number }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ booking.start_time }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ booking.end_time }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="px-6 py-4 text-center">{{ rooms[booking.room_id] }}</td>
+            <td class="px-6 py-4 text-center">{{ booking.start_time }}</td>
+            <td class="px-6 py-4 text-center">{{ booking.end_time }}</td>
+            <td class="px-6 py-4 text-center">
               <form
                 action="{{ url_for('resources.cancel_booking', booking_id=booking.id) }}"
                 method="post"

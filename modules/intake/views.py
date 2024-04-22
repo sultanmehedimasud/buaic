@@ -7,6 +7,7 @@ from .models import Semester, create_semester
 
 intake_bp = Blueprint('intake', __name__, url_prefix='/intake')
 
+
 @intake_bp.route('/create_semester', methods=['GET', 'POST'])
 def create_semester():
     if request.method == 'POST':
@@ -18,7 +19,7 @@ def create_semester():
         db.session.add(semester)
         db.session.commit()
 
-        flash('Semester created successfully.')
+        flash('Semester created successfully!')
         return redirect(url_for('home'))
 
     return render_template('intake/create_semester.html')

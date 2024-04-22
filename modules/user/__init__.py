@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, flash
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
