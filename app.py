@@ -16,8 +16,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-db.create_all()
-
 migrate = Migrate(app, db)
 
 login_manager.login_view = 'login'
@@ -36,6 +34,7 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
 mail = Mail(app)
 
+from modules.user.models import User
 from modules.user.views import user_bp
 
 app.register_blueprint(user_bp)
@@ -44,6 +43,7 @@ from modules.landing.views import landing_bp
 
 app.register_blueprint(landing_bp)
 
+from modules.intake.models import Semester
 from modules.intake.views import intake_bp
 
 app.register_blueprint(intake_bp)
@@ -52,18 +52,22 @@ from modules.members.views import members_bp
 
 app.register_blueprint(members_bp)
 
+from modules.polls.models import Polls, Voted
 from modules.polls.views import polls_bp
 
 app.register_blueprint(polls_bp)
 
+from modules.event.models import Event
 from modules.event.views import event_bp
 
 app.register_blueprint(event_bp)
 
+from modules.attendance.models import Attendance
 from modules.attendance.views import attendance_bp
 
 app.register_blueprint(attendance_bp)
 
+from modules.resources.models import Booking, Room
 from modules.resources.views import resource_bp
 
 app.register_blueprint(resource_bp)
@@ -71,6 +75,9 @@ app.register_blueprint(resource_bp)
 from modules.dashboard.views import dashboard_bp
 
 app.register_blueprint(dashboard_bp)
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
