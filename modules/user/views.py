@@ -107,7 +107,7 @@ def register():
         db.session.add(user)
         db.session.commit()
     
-        flash('Registration pending approval.')
+        flash('Registration pending approval.', 'success')
         return redirect(url_for('home'))
 
     return render_template('auth/registration.html')
