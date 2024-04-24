@@ -15,6 +15,9 @@ login_manager = LoginManager(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+db.create_all()
+
 migrate = Migrate(app, db)
 
 login_manager.login_view = 'login'
